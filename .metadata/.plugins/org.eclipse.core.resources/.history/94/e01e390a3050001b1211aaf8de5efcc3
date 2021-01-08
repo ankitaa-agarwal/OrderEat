@@ -1,0 +1,5 @@
+package com.ordereat.OrderEat.controller;
+
+public class RegistrationController {
+
+}

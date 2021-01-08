@@ -1,0 +1,52 @@
+package com.ordereat.OrderEat.Controller;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ordereat.OrderEat.Repository.RestaurantOwnerRepository;
+import com.ordereat.OrderEat.Entity.RestaurantOwner;
+
+@RestController
+@RequestMapping("/roe/restaurant")
+public class RestaurantOwnerDetailsController {
+
+	@Autowired
+	RestaurantOwnerRepository restaurantOwnerRepository;
+	
+	@GetMapping("/getrestaurantusers")
+	public ResponseEnitity<List<RestaurantOwner>> getRestaurantOwnersList(){
+		return restaurantOwnerRepository.findAll();
+	}
+	
+	@GetMapping("/getrestaurantuser/{id}")
+	public Optional<RestaurantOwner> getRestaurantOwner(@PathVariable("id") Long id) {
+		return restaurantOwnerRepository.findById(id);
+	}
+	
+	@GetMapping("/getRestaurants")
+	public List<RestaurantOwner> getRestaurantList(){
+		return restaurantOwnerRepository.findAll();
+	}
+	
+	@GetMapping("/getRestaurant/{id}")
+	public Optional<RestaurantOwner> getRestaurant(@PathVariable("id") Long id) {
+		return restaurantOwnerRepository.findById(id);
+	}
+	
+	@PutMapping("/updaterestaurantuser")
+	public updateRestaurantOwner(@RequestBody RestaurantOwner restaurantOwner) {
+		Long id = restaurantOwner.getId();
+		if(restaurantOwnerRepository.findById(id)) {
+			restaurantOwnerRepository.save(entity);
+		}
+	}
+}

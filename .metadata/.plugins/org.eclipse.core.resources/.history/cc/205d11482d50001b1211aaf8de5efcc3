@@ -1,0 +1,4 @@
+spring.application.name=OrderEat
+spring.datasource.url=jdbc:mysql://localhost:3306/wordpress
+spring.datasource.username=mkyong
+spring.datasource.password=password

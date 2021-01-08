@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="OrderEat">
+        <property name="context-root" value="OrderEat"/>
+    </wb-module>
+</project-modules>

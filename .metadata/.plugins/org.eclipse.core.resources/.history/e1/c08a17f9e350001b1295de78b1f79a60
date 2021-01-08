@@ -1,0 +1,12 @@
+package com.ordereat.OrderEat.Service;
+
+import org.springframework.stereotype.Service;
+
+import com.ordereat.OrderEat.Entity.RestaurantOwner;
+
+@Service
+public interface RestaurantOwnerService {
+
+	public void registerRestaurantOwner(RestaurantOwner restaurantOwner);
+
+}

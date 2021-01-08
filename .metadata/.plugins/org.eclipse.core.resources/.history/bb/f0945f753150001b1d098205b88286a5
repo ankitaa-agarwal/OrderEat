@@ -1,0 +1,13 @@
+package com.ordereat.OrderEat.Entity;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="restaurant_users")
+public class RestaurantUsers {
+
+	String name;
+	String username;
+	String email;
+}

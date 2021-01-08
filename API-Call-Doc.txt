@@ -1,0 +1,13 @@
+
+/
+/oe/login
+/oe/dashboard
+/roe/login
+/roe/dashboard
+
+/
+/roe/auth/login -> Read
+/roe/auth/register ->Write
+/roe/restaurant/getrestaurant -> Read
+/roe/restaurantuser/getrestaurantuser -> Read
+/roe/restaurantuser/updaterestaurantuser -> Write
