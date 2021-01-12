@@ -5,7 +5,156 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2021-01-08T03:15:00Z</updated>
+  <updated>2021-01-12T07:06:00Z</updated>
+  <entry>
+    <title>Spring Framework 5.3.3 available now</title>
+    <link rel="alternate" href="https://spring.io/blog/2021/01/11/spring-framework-5-3-3-available-now" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Stéphane Nicoll</name>
+    </author>
+    <id>tag:spring.io,2021-01-12:4330</id>
+    <updated>2021-01-12T07:06:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I am pleased to announce that Spring Framework &lt;code&gt;5.3.3&lt;/code&gt; is available now.&lt;/p&gt;
+&lt;p&gt;Spring Framework &lt;code&gt;5.3.3&lt;/code&gt; includes &lt;a href="https://github.com/spring-projects/spring-framework/releases/tag/v5.3.3"&gt;40 fixes and improvements&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://projects.spring.io/spring-framework/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-framework/docs/5.3.3/spring-framework-reference"&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>YMNNALFT:  HTTP Clients</title>
+    <link rel="alternate" href="https://spring.io/blog/2021/01/11/ymnnalft-http-clients" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2020-12-30:4318</id>
+    <updated>2021-01-11T11:00:00Z</updated>
+    <content type="html">&lt;p&gt;Welcome to another installment of &lt;em&gt;You May Not Need Another Library For That&lt;/em&gt; (YMNNALFT)! I&amp;rsquo;ve spent a lot of time since 2016 illuminating (or trying to, anyway!) some of the more enormous opportunities in the Spring ecosystem in &lt;a href="http://bit.ly/spring-tips-playlist"&gt;my Spring Tips videos&lt;/a&gt;. Today, however, I come to you in a different spirit, wanting to focus on the little, sometimes hidden, gems that do fantastic things and that might spare you an additional third-party dependency and its implied complexity. &lt;/p&gt;
+&lt;p&gt;Today we&amp;rsquo;re going to look at an all-in-one, handy dandy HTTP client, the &lt;code&gt;WebClient&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;HTTP services are a common source of data. The web is an existence proof of the scalability and resilience of HTTP, and it makes a very compelling case for constraints on HTTP, like REST, when building network services. If HTTP is the lingua franca of the open web, then we must ask questions in HTTP. &lt;/p&gt;
+&lt;p&gt;There are some great libraries out there (like &lt;a href="http://hc.apache.org/"&gt;Apache HttpComponents Client&lt;/a&gt; and &lt;a href="https://square.github.io/okhttp/"&gt;OkHttp&lt;/a&gt;) that work in much the same way. If you haven&amp;rsquo;t got a particular one in mind but want a world-class option and are already using Spring, you could use the non-blocking, Netty-based HTTP client in Spring Webflux, the &lt;code&gt;WebClient&lt;/code&gt;. &lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;WebClient&lt;/code&gt; is the reactive, non-blocking alternative to the &lt;code&gt;RestTemplate&lt;/code&gt;. I love the &lt;code&gt;WebClient&lt;/code&gt; because it is non-blocking: the client thread used to make the network request won&amp;rsquo;t get hung up waiting for a network service response. This implies much better scalability - threads are free to be used for something else. I also love the &lt;code&gt;WebClient&lt;/code&gt; because it uses the Reactive Streams APIs, making composition &lt;em&gt;much&lt;/em&gt; easier. We just saw some of that in the last example. &lt;/p&gt;
+&lt;p&gt;You can use the &lt;code&gt;WebClient&lt;/code&gt; to talk to any old HTTP endpoint, not just those written using non-blocking or reactive APIs on the server-side. And, even better, you can use the &lt;code&gt;WebClient&lt;/code&gt; even in otherwise non-reactive code. What if - and just hear me out here - &lt;em&gt;what if&lt;/em&gt; somebody wanted to use the &lt;code&gt;WebClient&lt;/code&gt; but couldn&amp;rsquo;t use the full reactive Spring web stack? &lt;/p&gt;
+&lt;img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fmedia.giphy.com%2Fmedia%2F1M9fmo1WAFVK0%2Fgiphy.gif&amp;f=1&amp;nofb=1" /&gt;
+&lt;p&gt;Search me! I can&amp;rsquo;t imagine why you&amp;rsquo;d not want to use the reactive HTTP stack. That&amp;rsquo;s OK even if you don&amp;rsquo;t because there&amp;rsquo;s still a lot of value in using the &lt;code&gt;WebClient&lt;/code&gt; all by its lonesome. You could use the &lt;code&gt;WebClient&lt;/code&gt; to make one or more HTTP calls and then concurrently compose the results. It&amp;rsquo;s ideal for easy scatter-gather kinds of composition. This is a natural thing to want to do even if you&amp;rsquo;re not otherwise using a reactive HTTP runtime, as might be the case if you&amp;rsquo;re running in a Servlet environment. &lt;/p&gt;
+&lt;p&gt;You&amp;rsquo;ll need the following dependencies to get the &lt;code&gt;WebClient&lt;/code&gt; on the classpath. &lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Reactive Web on &lt;a href="http://start.spring.io"&gt;the Spring Initializr&lt;/a&gt; - &lt;code&gt;org.springframework.boot&lt;/code&gt; : &lt;code&gt;spring-boot-starter-webflux&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let&amp;rsquo;s look at some code. This example does two different things (concurrently): &lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Initializes a new project using the HTTP API that powers &lt;a href="http://start.spring.io"&gt;the Spring Initializr&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;It retrieves all of the active open-source Spring projects using the Spring API&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class="prettyprint java"&gt;package bootiful.httpclient.webclient;&#xD;
+&#xD;
+import lombok.ToString;&#xD;
+import org.springframework.beans.factory.annotation.Value;&#xD;
+import org.springframework.boot.SpringApplication;&#xD;
+import org.springframework.boot.autoconfigure.SpringBootApplication;&#xD;
+import org.springframework.boot.context.event.ApplicationReadyEvent;&#xD;
+import org.springframework.context.ApplicationListener;&#xD;
+import org.springframework.context.annotation.Bean;&#xD;
+import org.springframework.core.io.buffer.DataBuffer;&#xD;
+import org.springframework.core.io.buffer.DataBufferUtils;&#xD;
+import org.springframework.http.MediaType;&#xD;
+import org.springframework.scheduling.annotation.EnableAsync;&#xD;
+import org.springframework.web.reactive.function.client.WebClient;&#xD;
+import reactor.core.publisher.Mono;&#xD;
+&#xD;
+import java.net.URI;&#xD;
+import java.nio.file.Path;&#xD;
+import java.util.ArrayList;&#xD;
+import java.util.Collection;&#xD;
+&#xD;
+import static java.nio.file.StandardOpenOption.CREATE;&#xD;
+&#xD;
+@EnableAsync&#xD;
+@SpringBootApplication&#xD;
+public class BootifulApplication {&#xD;
+&#xD;
+	public static void main(String[] args) {&#xD;
+		SpringApplication.run(BootifulApplication.class, args);&#xD;
+	}&#xD;
+&#xD;
+	@Bean&#xD;
+	WebClient webClient(WebClient.Builder builder) {&#xD;
+		return builder//&#xD;
+				.filter(//&#xD;
+						(clientRequest, exchangeFunction) -&amp;gt; exchangeFunction//&#xD;
+								.exchange(clientRequest)//&#xD;
+								.doOnNext(response -&amp;gt; System.out.println(&amp;quot;got a WebClient response: &amp;quot; + response))//&#xD;
+				) //&#xD;
+				.build();&#xD;
+	}&#xD;
+&#xD;
+	@Bean&#xD;
+	ApplicationListener&amp;lt;ApplicationReadyEvent&amp;gt; ready(@Value(&amp;quot;file://${user.home}/Desktop/output.zip&amp;quot;) Path output,&#xD;
+			WebClient client) {&#xD;
+&#xD;
+		return event -&amp;gt; {&#xD;
+&#xD;
+			// initialize a new Spring Boot project .zip archive&#xD;
+			Mono&amp;lt;DataBuffer&amp;gt; db = client.get()//&#xD;
+					.uri(URI.create(&amp;quot;https://start.spring.io/starter.zip&amp;quot;))//&#xD;
+					.accept(MediaType.APPLICATION_OCTET_STREAM)//&#xD;
+					.retrieve()//&#xD;
+					.bodyToMono(DataBuffer.class);&#xD;
+&#xD;
+			// gets written out to ~/output.zip&#xD;
+			Mono&amp;lt;Boolean&amp;gt; write = DataBufferUtils.write(db, output, CREATE).thenReturn(true);&#xD;
+&#xD;
+			// enumerate all the active Spring projects using the&#xD;
+			// JSON API while we&amp;#39;re at it...&#xD;
+			Mono&amp;lt;ProjectsResponse&amp;gt; json = client//&#xD;
+					.get()//&#xD;
+					.uri(URI.create(&amp;quot;https://spring.io/api/projects&amp;quot;))//&#xD;
+					.retrieve()//&#xD;
+					.bodyToMono(ProjectsResponse.class);&#xD;
+&#xD;
+			// look ma! No threading code! this will launch both network&#xD;
+			// calls (the .zip and the json) at the same time&#xD;
+			Mono.zip(write, json).subscribe(tuple -&amp;gt; enumerate(tuple.getT2()));&#xD;
+		};&#xD;
+	}&#xD;
+&#xD;
+	private void enumerate(ProjectsResponse pr) {&#xD;
+		pr._embedded //&#xD;
+				.projects //&#xD;
+						.stream() //&#xD;
+						.filter(p -&amp;gt; p.status.equalsIgnoreCase(&amp;quot;active&amp;quot;)) //&#xD;
+						.forEach(project -&amp;gt; System.out.println(project.toString()));&#xD;
+	}&#xD;
+&#xD;
+}&#xD;
+&#xD;
+@ToString&#xD;
+class ProjectsResponse {&#xD;
+&#xD;
+	public Embedded _embedded = new Embedded();&#xD;
+&#xD;
+	@ToString&#xD;
+	public static class Project {&#xD;
+&#xD;
+		public String name, slug, status, repositoryUrl;&#xD;
+&#xD;
+	}&#xD;
+&#xD;
+	@ToString&#xD;
+	public static class Embedded {&#xD;
+&#xD;
+		public Collection&amp;lt;Project&amp;gt; projects = new ArrayList&amp;lt;&amp;gt;();&#xD;
+&#xD;
+	}&#xD;
+&#xD;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want to bring in the &lt;code&gt;WebClient,&lt;/code&gt; but _ don&amp;rsquo;t_ want to use the rest of the reactive web stack, then you&amp;rsquo;ll need to tell Spring Boot. Spring Boot will attempt to standup a Netty-based Spring Webflux environment, otherwise. You&amp;rsquo;ll need the following configuration in your &lt;code&gt;application.properties&lt;/code&gt;. &lt;/p&gt;
+&lt;pre&gt;&lt;code class="prettyprint properties"&gt;spring.main.web-application-type=none
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Did you like this gem at a glance approach? Did you learn anything? As always, I&amp;rsquo;m keen on hearing from you, so &lt;a href="http://twitter.com/starbuxman"&gt;please sound off on Twitter (@starbuxman) &lt;/a&gt;! I&amp;rsquo;ll be back with another installment of &lt;em&gt;YMNNALFT&lt;/em&gt;, so be sure not to miss that. &lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>Spring Data's Migration from Jira to GitHub Issues</title>
     <link rel="alternate" href="https://spring.io/blog/2021/01/07/spring-data-s-migration-from-jira-to-github-issues" />
@@ -2002,312 +2151,6 @@ void keyExpressionRequired() {
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Cloud 2020.0.0-RC1 (aka Ilford) Is Available</title>
-    <link rel="alternate" href="https://spring.io/blog/2020/12/15/spring-cloud-2020-0-0-rc1-aka-ilford-is-available" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Ryan Baxter</name>
-    </author>
-    <id>tag:spring.io,2020-12-14:4302</id>
-    <updated>2020-12-15T13:22:35Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the community, I am pleased to announce that Release Candidate 1 (RC1) of the &lt;a href="https://cloud.spring.io"&gt;Spring Cloud 2020&lt;/a&gt; Release Train is available today. You can find the release in the &lt;a href="https://repo.spring.io/milestone/"&gt;Spring Milestone&lt;/a&gt; repository. See the 2020 &lt;a href="https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-2020.0-Release-Notes"&gt;release notes for more information&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#notable-changes-in-the-2020-release-train" class="anchor" name="notable-changes-in-the-2020-release-train"&gt;&lt;/a&gt;Notable Changes in the 2020 Release Train&lt;/h2&gt;
-&lt;p&gt;This release requires Spring Boot 2.4.0.&lt;/p&gt;
-&lt;p&gt;See the &lt;a href="https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-2020.0-Release-Notes#breaking-changes"&gt;wiki&lt;/a&gt; for a list of all breaking changes in this release train.&lt;/p&gt;
-&lt;p&gt;See all of the included issues and pull requests at the &lt;a href="https://github.com/orgs/spring-cloud/projects/50"&gt;Github project&lt;/a&gt;.&lt;/p&gt;&lt;h3&gt;&lt;a href="#spring-cloud-contract" class="anchor" name="spring-cloud-contract"&gt;&lt;/a&gt;Spring Cloud Contract&lt;/h3&gt;
-&lt;p&gt;The Gradle plugin &lt;a href="https://github.com/spring-cloud/spring-cloud-contract/pull/1558"&gt;creates a separate classpath when executing tasks&lt;/a&gt;.&lt;/p&gt;&lt;h3&gt;&lt;a href="#spring-cloud-kubernetes" class="anchor" name="spring-cloud-kubernetes"&gt;&lt;/a&gt;Spring Cloud Kubernetes&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Packages and starters have been refactored to &lt;a href="https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-2020.0-Release-Notes#spring-cloud-kubernetes"&gt;accommodate new Kubernetes Java Client implementations&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Starters have been added for Kubernetes Java Client implementations (&lt;a href="https://github.com/spring-cloud/spring-cloud-kubernetes/pull/687"&gt;PR&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-commons" class="anchor" name="spring-cloud-commons"&gt;&lt;/a&gt;Spring Cloud Commons&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;LoadBalancer - you can now use a custom health verification function and a RestTemplate-based mechanism with &lt;code&gt;HealthcheckServiceInstanceListSupplier&lt;/code&gt; (&lt;a href="https://github.com/spring-cloud/spring-cloud-commons/pull/866"&gt;PR&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;LoadBalancerProperties &lt;a href="https://github.com/spring-cloud/spring-cloud-commons/issues/830"&gt;have been repackaged&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Support has been added for &lt;code&gt;LoadBalancer&lt;/code&gt; selecting same instance if available (&lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2066"&gt;PR&lt;/a&gt;)&lt;/li&gt;
-  &lt;li&gt;Support has been added for `LoadBalancer selecting the instance specified by a cookie, if available (&lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2066"&gt;PR&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-function" class="anchor" name="spring-cloud-function"&gt;&lt;/a&gt;Spring Cloud Function&lt;/h3&gt;
-&lt;p&gt;Spring Cloud Function introduces two new features: support for &lt;a href="https://rsocket.io/"&gt;RSocket&lt;/a&gt; and &lt;a href="https://cloudevents.io/"&gt;Cloud Events&lt;/a&gt;.&lt;br/&gt;While we’re in the process of updating documentation with details on these features, you can check out samples and integration test cases to get additional information now.&lt;br/&gt;For Cloud Events support, you can look at the &lt;a href="https://github.com/spring-cloud/spring-cloud-function/tree/master/spring-cloud-function-samples/function-sample-cloudevent"&gt;Cloud Events samples&lt;/a&gt; as well as a recently published &lt;a href="https://spring.io/blog/2020/12/10/cloud-events-and-spring-part-1"&gt;blog post&lt;/a&gt;.&lt;br/&gt;For RSocket support, you can look at &lt;a href="https://github.com/spring-cloud/spring-cloud-function/tree/master/spring-cloud-function-rsocket/src/test/java/org/springframework/cloud/function/rsocket"&gt;some of the test cases&lt;/a&gt; demonstrating how functions can be invoked via RSocket. &lt;/p&gt;&lt;h3&gt;&lt;a href="#spring-cloud-sleuth" class="anchor" name="spring-cloud-sleuth"&gt;&lt;/a&gt;Spring Cloud Sleuth&lt;/h3&gt;&lt;h4&gt;&lt;a href="#moving-opentelemetry-support-to-incubator" class="anchor" name="moving-opentelemetry-support-to-incubator"&gt;&lt;/a&gt;Moving OpenTelemetry support to incubator&lt;/h4&gt;
-&lt;p&gt;As OpenTelemetry continues to evolve, we have decided to move OpenTelemetry support from Spring Cloud Sleuth to an &lt;a href="https://github.com/spring-cloud-incubator/spring-cloud-sleuth-otel/"&gt;incubator project&lt;/a&gt; . To continue using OpenTelemetry with Spring Cloud Sleuth, you will need to add the Spring repositories, the &lt;code&gt;spring-cloud-sleuth-otel-dependencies&lt;/code&gt; BOM, and the &lt;code&gt;spring-cloud-sleuth-otel-autoconfigure&lt;/code&gt; dependency.&lt;/p&gt;
-&lt;p&gt;We have released a &lt;code&gt;1.0.0-M1&lt;/code&gt; of Spring Cloud Sleuth OTel that is compatible with the &lt;code&gt;2020.0.0-RC1&lt;/code&gt; release train. The following listings show how to use it in Maven and Gradle:&lt;/p&gt;
-&lt;p&gt;Maven&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint xml"&gt; &amp;lt;properties&amp;gt;&#xD;
-   &amp;lt;spring-cloud-sleuth-otel.version&amp;gt;1.0.0-M1&amp;lt;/spring-cloud-sleuth-otel.version&amp;gt;&#xD;
-   &amp;lt;spring-cloud.version&amp;gt;2020.0.0-RC1&amp;lt;/spring-cloud.version&amp;gt;&#xD;
- &amp;lt;/properties&amp;gt;&#xD;
-&#xD;
- &amp;lt;dependencyManagement&amp;gt;&#xD;
-		&amp;lt;dependencies&amp;gt;&#xD;
-			&amp;lt;dependency&amp;gt;&#xD;
-				&amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-				&amp;lt;artifactId&amp;gt;spring-cloud-dependencies&amp;lt;/artifactId&amp;gt;&#xD;
-				&amp;lt;version&amp;gt;${spring-cloud.version}&amp;lt;/version&amp;gt;&#xD;
-				&amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;&#xD;
-				&amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;&#xD;
-			&amp;lt;/dependency&amp;gt;&#xD;
-			&amp;lt;dependency&amp;gt;&#xD;
-				&amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-				&amp;lt;artifactId&amp;gt;spring-cloud-sleuth-otel-dependencies&amp;lt;/artifactId&amp;gt;&#xD;
-				&amp;lt;!-- Provide the version of the Spring Cloud Sleuth OpenTelemetry project --&amp;gt;&#xD;
-				&amp;lt;version&amp;gt;${spring-cloud-sleuth-otel.version}&amp;lt;/version&amp;gt;&#xD;
-				&amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;&#xD;
-				&amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;&#xD;
-			&amp;lt;/dependency&amp;gt;&#xD;
-		&amp;lt;/dependencies&amp;gt;&#xD;
-	&amp;lt;/dependencyManagement&amp;gt;&#xD;
-&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-starter-sleuth&amp;lt;/artifactId&amp;gt;&#xD;
-        &amp;lt;exclusions&amp;gt;&#xD;
-            &amp;lt;exclusion&amp;gt;&#xD;
-                &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-                &amp;lt;artifactId&amp;gt;spring-cloud-sleuth-brave&amp;lt;/artifactId&amp;gt;&#xD;
-            &amp;lt;/exclusion&amp;gt;&#xD;
-        &amp;lt;/exclusions&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-sleuth-otel-autoconfigure&amp;lt;/artifactId&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-&#xD;
-		&amp;lt;repositories&amp;gt;&#xD;
-			&amp;lt;repository&amp;gt;&#xD;
-				&amp;lt;id&amp;gt;spring-snapshots&amp;lt;/id&amp;gt;&#xD;
-				&amp;lt;url&amp;gt;https://repo.spring.io/snapshot&amp;lt;/url&amp;gt;&#xD;
-				&amp;lt;snapshots&amp;gt;&amp;lt;enabled&amp;gt;true&amp;lt;/enabled&amp;gt;&amp;lt;/snapshots&amp;gt;&#xD;
-			&amp;lt;/repository&amp;gt;&#xD;
-			&amp;lt;repository&amp;gt;&#xD;
-				&amp;lt;id&amp;gt;spring-milestones&amp;lt;/id&amp;gt;&#xD;
-				&amp;lt;url&amp;gt;https://repo.spring.io/milestone&amp;lt;/url&amp;gt;&#xD;
-			&amp;lt;/repository&amp;gt;&#xD;
-		&amp;lt;/repositories&amp;gt;&#xD;
-		&amp;lt;pluginRepositories&amp;gt;&#xD;
-			&amp;lt;pluginRepository&amp;gt;&#xD;
-				&amp;lt;id&amp;gt;spring-snapshots&amp;lt;/id&amp;gt;&#xD;
-				&amp;lt;url&amp;gt;https://repo.spring.io/snapshot&amp;lt;/url&amp;gt;&#xD;
-			&amp;lt;/pluginRepository&amp;gt;&#xD;
-			&amp;lt;pluginRepository&amp;gt;&#xD;
-				&amp;lt;id&amp;gt;spring-milestones&amp;lt;/id&amp;gt;&#xD;
-				&amp;lt;url&amp;gt;https://repo.spring.io/milestone&amp;lt;/url&amp;gt;&#xD;
-			&amp;lt;/pluginRepository&amp;gt;&#xD;
-		&amp;lt;/pluginRepositories&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Gradle&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;ext {&#xD;
-  springCloudSleuthOtelVersion = &amp;quot;1.0.0-M1&amp;quot;&#xD;
-  springCloudVersion = &amp;quot;2020.0.0-RC1&amp;quot;&#xD;
-}&#xD;
-&#xD;
-dependencyManagement {&#xD;
-    imports {&#xD;
-        mavenBom &amp;quot;org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}&amp;quot;&#xD;
-        mavenBom &amp;quot;org.springframework.cloud:spring-cloud-sleuth-otel-dependencies:${springCloudSleuthOtelVersion}&amp;quot;&#xD;
-    }&#xD;
-}&#xD;
-&#xD;
-dependencies {&#xD;
-    implementation(&amp;quot;org.springframework.cloud:spring-cloud-starter-sleuth&amp;quot;) {&#xD;
-        exclude group: &amp;#39;org.springframework.cloud&amp;#39;, module: &amp;#39;spring-cloud-sleuth-brave&amp;#39;&#xD;
-    }&#xD;
-    implementation &amp;quot;org.springframework.cloud:spring-cloud-sleuth-otel-autoconfigure&amp;quot;&#xD;
-}&#xD;
-&#xD;
-repositories {&#xD;
-    mavenCentral()&#xD;
-    maven {&#xD;
-            url &amp;quot;https://repo.spring.io/snapshot&amp;quot;&#xD;
-    }&#xD;
-    maven {&#xD;
-            url &amp;quot;https://repo.spring.io/milestone&amp;quot;&#xD;
-    }&#xD;
-    maven {&#xD;
-            url &amp;quot;https://repo.spring.io/release&amp;quot;&#xD;
-    }&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;h3&gt;&lt;a href="#spring-cloud-task" class="anchor" name="spring-cloud-task"&gt;&lt;/a&gt;Spring Cloud Task&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Added ability for the user to utilize external DBs for Multi-DB &lt;a href="https://github.com/spring-cloud/spring-cloud-task/issues/690"&gt;sample&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Spring Cloud Task now supports &lt;a href="https://github.com/spring-cloud/spring-cloud-task/issues/645"&gt;&lt;code&gt;JobApplicationRunner&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Single-step Batch Job sample now supports &lt;a href="https://github.com/spring-cloud/spring-cloud-task/issues/745"&gt;AMQP and Kafka&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-gateway" class="anchor" name="spring-cloud-gateway"&gt;&lt;/a&gt;Spring Cloud Gateway&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;LoadBalancer Lifecycle support has been added (&lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2066"&gt;PR&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The following modules were updated as part of 2020.0.0-RC1:&lt;/p&gt;
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Module &lt;/th&gt;
-      &lt;th&gt;Version &lt;/th&gt;
-      &lt;th&gt;Issues&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Circuitbreaker &lt;/td&gt;
-      &lt;td&gt;2.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-circuitbreaker/milestone/7?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Contract &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-contract/milestone/73?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Kubernetes &lt;/td&gt;
-      &lt;td&gt;2.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-kubernetes/milestone/27?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Commons &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Openfeign &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Cloudfoundry &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Security &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Bus &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Cli &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Zookeeper &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-zookeeper/milestone/32?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Sleuth &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-sleuth/milestone/85?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Consul &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Gateway &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Netflix &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-netflix/milestone/97?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Vault &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-vault/milestone/43?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Config &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-config/milestone/83?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Task &lt;/td&gt;
-      &lt;td&gt;2.3.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-task/releases/tag/2.3.0-RC1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;As always, we welcome feedback on &lt;a href="https://github.com/spring-cloud/"&gt;GitHub&lt;/a&gt;, on &lt;a href="https://gitter.im/spring-cloud/spring-cloud"&gt;Gitter&lt;/a&gt;, on &lt;a href="https://stackoverflow.com/questions/tagged/spring-cloud"&gt;Stack Overflow&lt;/a&gt;, or on &lt;a href="https://twitter.com/SpringCloud"&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The following listings show how to get started with Maven with a BOM (dependency management only) or with Gradle:&lt;/p&gt;
-&lt;p&gt;Maven with BOM:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;&lt;br/&gt;    &amp;lt;repositories&amp;gt;&#xD;
-        &amp;lt;repository&amp;gt;&#xD;
-            &amp;lt;id&amp;gt;spring-milestones&amp;lt;/id&amp;gt;&#xD;
-            &amp;lt;name&amp;gt;Spring Milestones&amp;lt;/name&amp;gt;&#xD;
-            &amp;lt;url&amp;gt;https://repo.spring.io/milestone&amp;lt;/url&amp;gt;&#xD;
-            &amp;lt;snapshots&amp;gt;&#xD;
-                &amp;lt;enabled&amp;gt;false&amp;lt;/enabled&amp;gt;&#xD;
-            &amp;lt;/snapshots&amp;gt;&#xD;
-        &amp;lt;/repository&amp;gt;&#xD;
-    &amp;lt;/repositories&amp;gt;&#xD;
-&amp;lt;dependencyManagement&amp;gt;&#xD;
-    &amp;lt;dependencies&amp;gt;&#xD;
-        &amp;lt;dependency&amp;gt;&#xD;
-            &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-            &amp;lt;artifactId&amp;gt;spring-cloud-dependencies&amp;lt;/artifactId&amp;gt;&#xD;
-            &amp;lt;version&amp;gt;2020.0.0-RC1&amp;lt;/version&amp;gt;&#xD;
-            &amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;&#xD;
-            &amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;&#xD;
-        &amp;lt;/dependency&amp;gt;&#xD;
-    &amp;lt;/dependencies&amp;gt;&#xD;
-&amp;lt;/dependencyManagement&amp;gt;&#xD;
-&amp;lt;dependencies&amp;gt;&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-starter-config&amp;lt;/artifactId&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-starter-netflix-eureka-client&amp;lt;/artifactId&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-    ...&#xD;
-&amp;lt;/dependencies&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Gradle:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;buildscript {&#xD;
-dependencies {&#xD;
-classpath &amp;quot;io.spring.gradle:dependency-management-plugin:1.0.2.RELEASE&amp;quot;&#xD;
-}&#xD;
-}&#xD;
-&#xD;
-repositories {&#xD;
-maven {&#xD;
-url &amp;#39;https://repo.spring.io/milestone&amp;#39;&#xD;
-}&#xD;
-}&#xD;
-&#xD;
-apply plugin: &amp;quot;io.spring.dependency-management&amp;quot;&#xD;
-&#xD;
-dependencyManagement {&#xD;
-imports {&#xD;
-mavenBom &amp;#39;org.springframework.cloud:spring-cloud-dependencies:2020.0.0-RC1&amp;#39;&#xD;
-}&#xD;
-}&#xD;
-&#xD;
-dependencies {&#xD;
-compile &amp;#39;org.springframework.cloud:spring-cloud-starter-config&amp;#39;&#xD;
-compile &amp;#39;org.springframework.cloud:spring-cloud-starter-netflix-eureka-client&amp;#39;&#xD;
-...&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>A Bootiful Podcast: Spring Batch co-lead Mahmoud Ben Hassine</title>
-    <link rel="alternate" href="https://spring.io/blog/2020/12/15/a-bootiful-podcast-spring-batch-co-lead-mahmoud-ben-hassine" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2020-12-15:4305</id>
-    <updated>2020-12-15T03:43:30Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! In this special midweek installment I correct a mistake I made last week when I inadvertently released the episode featuring Dion Almaer, with the interview I conducted with Spring Batch co-lead Mahmoud Ben Hassine. This is the actual episode with Mahmoud Ben Hassine, with the correct title and everything! Enjoy!&lt;/p&gt;
-&lt;iframe title="Spring Batch co-lead Mahmoud Ben Hassine" height="122" width="100%" style="border: none;" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/media/player/rpgt4-f50e00?from=pb6admin&amp;download=1&amp;version=1&amp;auto=0&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Helvetica&amp;skin=1&amp;pfauth=&amp;btn-skin=107"&gt;&lt;/iframe&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>

@@ -1,0 +1,9 @@
+package com.ordereat.OrderEat;
+
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableSpringSecurity
+public class SpringSecurityConfigFile {
+
+}

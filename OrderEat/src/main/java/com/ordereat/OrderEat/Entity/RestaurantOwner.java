@@ -1,5 +1,9 @@
 package com.ordereat.OrderEat.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,20 +11,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name="restaurant_users")
+@Table(name="restaurant_users")//PARENT CLASS //Child Class for Roles
 public class RestaurantOwner {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-     
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name="restaurant_id", nullable = false)//Owner of relation, first insertUser then restaurant details
+    
+	@JsonBackReference
+	@OneToOne(fetch = FetchType.LAZY,cascade =  CascadeType.ALL)
+	@JoinColumn(name="restaurant_id")//Owner of relation, first insertUser then restaurant details
 	private RestaurantDetails restaurantDetails;
+	
+	@JsonManagedReference
+	@OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "restaurantOwner")
+	private List<Role> roles = new ArrayList<Role>();
 	
     @Column(nullable = false, unique = true, length = 45)
     private String email;
@@ -165,4 +179,12 @@ public class RestaurantOwner {
 		this.restaurantDetails = restaurantDetails;
 	}
 	
+	public void addRole(Role role) {
+		this.roles.add(role);
+		role.setRestaurantOwner(this);
+	}
+	
+	public List<Role> getRoles() {
+		return this.roles;
+	}
 }

@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name="restaurant_details")
 public class RestaurantDetails {
@@ -20,8 +22,9 @@ public class RestaurantDetails {
     
 	@Column(name = "name", nullable = false, length = 20)
 	private String restaurantName;
-
-	 @OneToOne(fetch = FetchType.LAZY,
+	
+	@JsonManagedReference
+	@OneToOne(fetch = FetchType.LAZY,
 	            cascade =  CascadeType.ALL, mappedBy = "restaurantDetails")
 	private RestaurantOwner restaurantOwner;
 	

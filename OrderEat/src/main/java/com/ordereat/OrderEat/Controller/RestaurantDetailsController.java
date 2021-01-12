@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ordereat.OrderEat.Entity.CombinedRegistrationEntity;
 import com.ordereat.OrderEat.Entity.ResponseEntityClass;
 import com.ordereat.OrderEat.Entity.RestaurantDetails;
 import com.ordereat.OrderEat.Entity.RestaurantOwner;
@@ -40,7 +44,6 @@ public class RestaurantDetailsController {
 	
 	@GetMapping("/getRestaurantUsers")
 	public ResponseEntity<ResponseEntityClass> getRestaurantOwnersList(){
-		
 		List<RestaurantOwner> restaurantOwnersList = (List<RestaurantOwner>) restaurantOwnerRepository.findAllRestaurantOwner();
 		ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), restaurantOwnersList, "");
 		return new ResponseEntity<ResponseEntityClass>(response,HttpStatus.OK);
@@ -90,10 +93,68 @@ public class RestaurantDetailsController {
 		}
 	}
 	
-	/*
-	 * @PutMapping("/updaterestaurantuser") public
-	 * updateRestaurantOwner(@RequestBody RestaurantOwner restaurantOwner) { Long id
-	 * = restaurantOwner.getId(); if(restaurantDetailsRespository.findById(id)) {
-	 * restaurantDetailsRespository.save(entity); } }
-	 */
+	@GetMapping("/getRestaurantOwnerDetails/{id}")
+	public ResponseEntity<ResponseEntityClass> getOwnerDetailsFromRestaurantId(@PathVariable("id") Long restaurantId){
+		RestaurantOwner restaurantOwner = restaurantOwnerRepository.getOwnerFromRestaurantId(restaurantId);
+		List<RestaurantOwner> ownerExtracted = new ArrayList<RestaurantOwner>();
+		if(restaurantOwner == null) {
+			/*
+			 * ResponseEntityClass response = new
+			 * ResponseEntityClass(STATUS.FAILURE.toString(), ownerExtracted, ""); return
+			 * new ResponseEntity<ResponseEntityClass>(response,HttpStatus.NOT_FOUND);
+			 */
+			throw new NotFoundException("Restaurant User does not exist");
+		}else {
+			ownerExtracted.add(restaurantOwner);
+			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), ownerExtracted, "");
+			return new ResponseEntity<ResponseEntityClass>(response,HttpStatus.OK);
+		}
+	}
+	
+	@PutMapping("/updateRestaurantDetails/{id}")
+	public ResponseEntity<ResponseEntityClass> updateRestaurantDetails(@PathVariable("id") Long restaurantId, @RequestBody RestaurantDetails restaurantDetails){
+		RestaurantDetails updatedDetails = new RestaurantDetails();
+		List<RestaurantDetails> updatedList = new ArrayList<RestaurantDetails>();
+		if(restaurantOwnerRepository.findIfRestaurantExists(restaurantId)) {
+			updatedDetails = restaurantOwnerRepository.updateRestaurantDetails(restaurantDetails);
+			updatedList.add(updatedDetails);
+			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), updatedList, "");
+			return new ResponseEntity<ResponseEntityClass>(response,HttpStatus.OK);
+		}else {
+			throw new NotFoundException("Restaurant does not exist");
+		}
+	}
+
+	@PutMapping("/updateRestaurantOwner/{id}")
+	public ResponseEntity<ResponseEntityClass> updateRestaurantOwner(@PathVariable("id") Long userId, @RequestBody RestaurantOwner restaurantOwner){
+		RestaurantOwner updatedOwner = new RestaurantOwner();
+		List<RestaurantOwner> updatedList = new ArrayList<RestaurantOwner>();
+		if(restaurantOwnerRepository.findIfRestaurantOwnerExists(userId)) {
+			updatedOwner = restaurantOwnerRepository.updateRestaurantOwner(restaurantOwner);
+			updatedList.add(updatedOwner);
+			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), updatedList, "");
+			return new ResponseEntity<ResponseEntityClass>(response,HttpStatus.OK);
+		}else {
+			throw new NotFoundException("Restaurant User does not exist");
+		}
+	}
+	
+	@GetMapping("/getRestaurantDetailsFromOwner/{id}")
+	public ResponseEntity<ResponseEntityClass> getDetailsFromRestaurantOwner(@PathVariable("id") Long owner_id){
+		RestaurantDetails restaurantDetails = restaurantOwnerRepository.getOwnerAndRestaurantDetails(owner_id);
+		List<RestaurantDetails> extractedResponseList = new ArrayList<RestaurantDetails>();
+		if(restaurantDetails == null) {
+			/*
+			 * ResponseEntityClass response = new
+			 * ResponseEntityClass(STATUS.FAILURE.toString(), ownerExtracted, ""); return
+			 * new ResponseEntity<ResponseEntityClass>(response,HttpStatus.NOT_FOUND);
+			 */
+			throw new NotFoundException("Restaurant User does not exist");
+		}else {
+			extractedResponseList.add(restaurantDetails);
+			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), extractedResponseList, "");
+			return new ResponseEntity<ResponseEntityClass>(response,HttpStatus.OK);
+		}
+	}
+	
 }

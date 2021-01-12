@@ -1,0 +1,112 @@
+package com.ordereat.OrderEat.Repository;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.ordereat.OrderEat.Entity.CombinedRegistrationEntity;
+import com.ordereat.OrderEat.Entity.RestaurantDetails;
+import com.ordereat.OrderEat.Entity.RestaurantOwner;
+
+@Repository
+@Transactional
+public class RestaurantOwnerRespositoryImpl implements RestaurantOwnerRepository {
+
+	@Autowired
+	EntityManager entityManager;
+	
+	@Override
+	public RestaurantOwner findRestaurantOwnerById(Long id) {
+		TypedQuery<RestaurantOwner> typedQuery
+	      = entityManager.createQuery("SELECT owner FROM RestaurantOwner owner where owner.id = :id", RestaurantOwner.class);
+	    typedQuery.setParameter("id", id);
+	    return typedQuery.getSingleResult();
+	}
+
+	@Override
+	public void registerRestaurantOwnerAndRestaurant(CombinedRegistrationEntity combinedRegistrationEntity) {
+		// TODO Auto-generated method stub
+		RestaurantDetails restaurantDetails = new RestaurantDetails(combinedRegistrationEntity.getRestaurantDetails().getRestaurantName());
+		RestaurantOwner restaurantOwner = new RestaurantOwner();
+		restaurantOwner.setEmail(combinedRegistrationEntity.getRestaurantOwner().getEmail());
+		restaurantOwner.setFullName(combinedRegistrationEntity.getRestaurantOwner().getFullName());
+		restaurantOwner.setPassword(combinedRegistrationEntity.getRestaurantOwner().getPassword());
+		restaurantOwner.setPhoneNumber(combinedRegistrationEntity.getRestaurantOwner().getPhoneNumber());
+		restaurantOwner.setUsername(combinedRegistrationEntity.getRestaurantOwner().getUsername());
+		
+		restaurantOwner.setRestaurantDetails(restaurantDetails);
+		restaurantDetails.setRestaurantOwner(restaurantOwner);
+		
+		entityManager.persist(restaurantOwner);
+		entityManager.flush();
+	}
+
+	@Override
+	public List<RestaurantOwner> findAllRestaurantOwner() {
+		// TODO Auto-generated method stub
+		TypedQuery<RestaurantOwner> typedQuery
+	      = entityManager.createQuery("SELECT owner FROM RestaurantOwner owner", RestaurantOwner.class);
+	    return typedQuery.getResultList();
+	}
+
+	@Override
+	public boolean findIfExists(CombinedRegistrationEntity combinedEntity) {
+		// TODO Auto-generated method stub
+		String restaurantOwnerQuery = "Select user from RestaurantOwner user where email = :email";
+		TypedQuery<RestaurantOwner> typedQuery = entityManager.createQuery(restaurantOwnerQuery, RestaurantOwner.class);
+		typedQuery.setParameter("email", combinedEntity.getRestaurantOwner().getEmail());
+		if(typedQuery.getResultList().size() > 0)
+			return true;
+		return false;
+	}
+
+	@Override
+	public RestaurantOwner getOnwerFromRestaurantId(Long id) {
+		String query = "Select ownerDetails from RestaurantOwner ownerDetails where restaurant_id = : restaurant_id";
+		TypedQuery<RestaurantOwner> typedQuery
+	      = entityManager.createQuery(query, RestaurantOwner.class);
+		typedQuery.setParameter("restaurant_id", id);
+	    return typedQuery.getSingleResult();
+	}
+	
+	@Override
+	public boolean findIfRestaurantExists(Long id) {
+		String query = "Select restaurant From RestaurantDetails restaurant where id = :id";
+		TypedQuery<RestaurantDetails> typedQuery = entityManager.createQuery(query, RestaurantDetails.class);
+		typedQuery.setParameter("id", id);
+		if(typedQuery.getResultList().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public RestaurantDetails updateRestaurantDetails(RestaurantDetails restaurantDetails) {
+		entityManager.merge(restaurantDetails);
+		entityManager.flush();
+		return entityManager.find(RestaurantDetails.class, restaurantDetails.getId());
+	}
+	@Override
+	public boolean findIfRestaurantExists(Long id) {
+		String query = "Select restaurant From RestaurantDetails restaurant where id = :id";
+		TypedQuery<RestaurantDetails> typedQuery = entityManager.createQuery(query, RestaurantDetails.class);
+		typedQuery.setParameter("id", id);
+		if(typedQuery.getResultList().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public RestaurantOwner updateRestaurantOwner(RestaurantOwner restaurantOwner) {
+		entityManager.merge(restaurantOwner);
+		entityManager.flush();
+		return entityManager.find(RestaurantOwner.class, restaurantOwner.getId());
+	}
+
+}
