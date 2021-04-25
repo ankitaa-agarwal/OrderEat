@@ -1,5 +1,0 @@
-insert into restaurant_details (name) values ('Restaurant');
-
-insert into restaurant_users (name, username, email, phone, password) values ('Ankita Agarwal', 'aagarwal', 'ankita@gmail.com', 34567, 'random123' );
-insert into restaurant_users (name, username, email, phone, password) values ('Ankita Agarwal', 'aagarwal', 'ankita@gmail.com', 34567, 'random123' );
-insert into restaurant_users (name, username, email, phone, password) values ('Ankita Agarwal', 'aagarwal', 'ankita@gmail.com', 34567, 'random123' );

@@ -1,9 +1,0 @@
-package com.ordereat.OrderEat.Exception;
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class RestaurantNotFoundException extends RuntimeException{
-
-	public RestaurantNotFoundException(String exception) {
-		super(exception);
-	}
-}

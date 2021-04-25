@@ -1,0 +1,228 @@
+auth
+- roe/auth/register
+request: CombinedObject{
+	restaurantDetails:
+		name:
+	restaurantUser:
+		email
+		username
+		password
+		fullname
+		phoneNumber
+}
+response: { status: 'SUCCESS' , error: '' }
+
+- roe/auth/login
+request: {
+	email: // db check on email and username
+	password:
+}
+response: {
+	status:
+	message: {
+		restaurant: {
+			restaurantid:
+			restaurantname:
+		},
+		restaurantUser: {
+			restaurantuserid:
+			username:
+			fullname:
+			email:
+			phone:
+		},
+		restaurantDay: [{
+			details of the days table
+		}]
+	}
+}
+
+- roe/updaterestaurant/{restaurantid}
+request: {
+	name:
+}
+response: {
+	status: 'SUCCESS'
+}
+
+- roe/getallrestaurantusers/{restaurantid}
+request: {
+}
+response:{
+	status:
+	message: [{
+		restaurantuserid:
+		fullname:
+		username:
+		phonenumber:
+		email:
+		role: 'OWNER' / 'STAFF'
+	}]
+}
+
+- roe/updaterestaurantusers/{restaurantuserid}
+request: {
+		fullname:
+		email:
+		username:
+		phoneNumber:
+}
+response: { status: 'SUCCESS' }
+
+finally understood the logic behind persisting one to many entities. The process is:
+
+Create parent class
+Persist it
+Create child class
+Associate child with parent
+Persist child (the parent collection is updated)
+
+
+POST - roe/createrestaurantuser -> ACCESS : OWNER
+request: {
+	restaurant_id:
+	fullname:
+	username:
+	email:
+	phonenumber:
+	role: 'OWNER' / 'STAFF'
+}
+response: { status: 'SUCCESS' }
+
+POST - roe/verifyrestaurantuser
+request: {
+	email:
+	password:
+}
+response: { status: 'SUCCESS' }
+
+
+POST - /roe/product/addProduct
+request:
+{
+	restaurantid:
+	name:
+	description:
+	productPrice:
+	productPrepTime:
+}
+response:
+	success
+	
+PUT - /roe/product/updateProduct
+request:{
+	productID:
+	name:
+	description:
+	productPrice:
+	productPrepTime:
+}
+response:
+	success
+	
+DELETE - /roe/product/deleteProduct/{id}
+request:{}
+response:{
+	success
+}
+
+GET - /roe/product/getProcutsForRestaurant/{id}
+response:{
+	message:[
+		{},{}
+	]
+}
+
+-----------------------
+
+POST - /roe/day/updateRestaurantDay
+request: {
+	id:
+	start_time:
+	end_time:
+	seats:
+}
+response: { status: "SUCCESS" }
+
+-------------------------------------
+
+GET - /oe/getrestaurants
+request: {}
+response: {
+	restaurants: [{
+		id:
+		name:
+		city:
+	}]
+}
+
+GET /oe/getrestaurant/{restaurant_id}
+request: {}
+response: {
+	restaurant_details: {
+		id:
+		name:
+		city:
+	},
+	restaurant_products: [{
+		id:
+		name:
+		description:
+		price:
+		prep_time:
+	}],
+	restaurant_days: [{
+		id:
+		day:
+		start_time:
+		end_time:
+		seats:
+		is_open:
+	}]
+}
+
+POST - /oe/order
+request: {
+	customer_id:
+	restaurant_id:
+	seats:
+	products: [{
+		id:
+		quantity:
+	}]
+}
+response: { status: 'SUCCESS' }
+
+GET - /oe/getorders
+request: {}
+response: {
+	orders: [{
+		id:
+		customer_name:
+		restaurant_name:
+		seats:
+		quantity:
+		total_amount: (each product * quantity)
+	}]
+}
+
+GET - /oe/getorder/{order_id}
+request: {}
+response: {
+	id:
+	customer_id:
+	customer_name:
+	restaurant_id:
+	restaurant_name:
+	seats:
+	products: [{
+		id:
+		product_name:
+		description:
+		price:
+		prep_time:
+		quantity:
+	}],
+	total_quantity:
+	total_amount:
+}

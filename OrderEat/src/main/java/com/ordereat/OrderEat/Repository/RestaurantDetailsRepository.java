@@ -11,5 +11,5 @@ import com.ordereat.OrderEat.Entity.RestaurantDetails;
 public interface RestaurantDetailsRepository extends JpaRepository<RestaurantDetails, Long>{
 
 	@Query("SELECT details FROM RestaurantDetails details where details.id = :id ")
-	RestaurantDetails findRestaurantOwnerById(@Param("id")Long id);
+	RestaurantDetails findRestaurantDetailsById(@Param("id")Long id);
 }

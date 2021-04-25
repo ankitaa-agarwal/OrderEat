@@ -5,3 +5,35 @@
 1610435314293	Delete element
 1610435327301	Delete element
 1610435841836	Delete element
+1610461697685	Rename type 'CombinedRegistrationEntity'
+1610478516447	Rename type 'CombinedUserRegisteration'
+1610478769533	Rename method 'findIfExists'
+1610478779767	Rename method 'findIfExists'
+1610478994181	Delete element
+1610479234845	Rename type 'RestaurantOwnerController'
+1610480134604	Rename method 'getOwnerAndRestaurantDetails'
+1610480168320	Rename method 'getOwnerFromRestaurantId'
+1610480269677	Rename type 'RestaurantOwnerService'
+1610480285762	Rename field 'restaurantOwnerService'
+1610480300208	Rename type 'RestaurantOwnerServiceImpl'
+1610480938793	Rename method 'findRestaurantOwnerById'
+1610536107753	Delete element
+1610605812296	Rename local variable 'userExists'
+1610617939150	Rename method 'findAll'
+1610631248691	Delete element
+1610631300981	Delete element
+1610634653185	Delete element
+1610791682769	Rename type 'RestaurantOwner'
+1610792355507	Rename method 'registerRestaurantOwner'
+1610798701625	Rename type 'RestaurantOwnerRepository'
+1610798715142	Rename type 'RestaurantOwnerRespositoryImpl'
+1610798892326	Rename type 'CombinedOwnerRegistrationEntity'
+1610798917227	Rename type 'RestaurantOwnerService'
+1610798924191	Rename type 'RestaurantUSerService'
+1610798949340	Rename type 'RestaurantOwnerServiceImpl'
+1610799177393	Rename local variable 'combinedRegistrationEntity'
+1610800140623	Rename field 'restaurantUser'
+1610809929744	Rename local variable 'restaurantProduct'
+1610809982953	Rename local variable 'resProduct'
+1610825646258	Rename local variable 'restaurantProduct'
+1610827269587	Rename local variable 'restaurantUser'
