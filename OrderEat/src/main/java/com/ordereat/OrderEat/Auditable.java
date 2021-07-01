@@ -26,9 +26,8 @@ public abstract class Auditable<U> {
     @LastModifiedBy
     private U updatedBy;
     
-    @Column(name = "createdOn", nullable = false, updatable = false)
+    @Column(name = "createdOn", updatable = false)
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createdOn;
 
     @Column(name = "updatedOn")

@@ -29,4 +29,6 @@ public interface RestaurantUserService {
 	ResponseEntity<ResponseEntityClass> getUserDetailsFromRestaurantId(Long restaurantId);
 
 	ResponseEntity<ResponseEntityClass> getRestaurants();
+
+	RestaurantUser getUserByUserName(String username);
 }

@@ -12,7 +12,7 @@ public interface RestaurantUserRepository {
 
 	RestaurantUser findRestaurantUserById(Long id);
 	
-	void registerRestaurantUserAndRestaurant(UserRegistrationEntity combinedRegistrationEntity);
+	void registerAdminAndRestaurant(UserRegistrationEntity combinedRegistrationEntity);
 
 	List<RestaurantUser> findAllRestaurantUser();
 
@@ -28,15 +28,15 @@ public interface RestaurantUserRepository {
 
 	Object[] getRestaurantDetailsFromUser(Long user_id);
 	
-	RestaurantUser getUserByUserName(String username);
+	Object getUserByUserName(String username);
 
-	UserRegistrationEntity checkIfValidUser(LoginCredentials loginCredentials);
+	UserRegistrationEntity checkIfValidUser();
 
 	RestaurantUser isValidCredentials(String emailId, String password);
 
 	List<RestaurantUser> getUserByEmailId(String username);
 
-	void createRestaurantUser(RestaurantStaff restaurantStaff);
+	void registerRestaurantStaffOrManager(RestaurantStaff restaurantStaff);
 
 	//RestaurantUser isValidUserNameCredentials(String username, String password);
 }

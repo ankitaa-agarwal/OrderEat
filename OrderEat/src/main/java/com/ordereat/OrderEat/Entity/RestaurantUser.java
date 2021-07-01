@@ -13,16 +13,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.ordereat.OrderEat.Auditable;
 
 @Entity
 @Table(name="restaurant_users")//PARENT CLASS of RestaurantDetails //Child Class for Roles
-public class RestaurantUser {
+public class RestaurantUser extends Auditable<String> {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,9 +35,15 @@ public class RestaurantUser {
 	@JoinColumn(name="restaurant_id")//Owner of relation, first insertUser then restaurant details
 	private RestaurantDetails restaurantDetails;
 	
-	@JsonManagedReference(value = "userRole")
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "restaurantUser")
-	private Set<Role> roles = new HashSet<Role>();
+	/*
+	 * @JsonManagedReference(value = "userRole")
+	 * 
+	 * @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy =
+	 * "restaurantUser") private Set<Role> roles = new HashSet<Role>();
+	 */
+	@OneToOne
+    @JoinColumn(name = "roleId")
+	private Role roleId;
 	
     @Column(nullable = false, unique = true, length = 45)
     private String email;
@@ -117,14 +125,14 @@ public class RestaurantUser {
 	public void setRestaurantDetails(RestaurantDetails restaurantDetails) {
 		this.restaurantDetails = restaurantDetails;
 	}
-	
-	public void addRole(Role role) {
-		this.roles.add(role);
-		role.setRestaurantUser(this);
+
+	public Role getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Role roleId) {
+		this.roleId = roleId;
 	}
 	
-	public Set<Role> getRoles() {
-		return this.roles;
-	}
 	
 }

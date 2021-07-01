@@ -26,8 +26,8 @@ public class RestaurantStaff {
 	@JsonProperty("phoneNumber")
 	private String phoneNumber;
 	
-	@JsonProperty("role")
-	private String role;
+	@JsonProperty("roleId")
+	private String roleId;
 
 	public RestaurantStaff() {}
 	
@@ -72,11 +72,11 @@ public class RestaurantStaff {
 	}
 
 	public String getRole() {
-		return role;
+		return roleId;
 	}
 
 	public void setRole(String role) {
-		this.role = role;
+		this.roleId = role;
 	}
 	
 }

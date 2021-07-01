@@ -15,7 +15,7 @@ public interface CustomerRepository {
 
 	List<CustomerEntity> getCustomerByEmailId(String username);
 
-	CustomerEntity getCustomerByUserName(String username);
+	Object getCustomerByUserName(String username);
 
 	CustomerEntity isValidCredentials(String loginId, String password);
 

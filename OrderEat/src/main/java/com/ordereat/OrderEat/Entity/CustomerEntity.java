@@ -12,16 +12,23 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.ordereat.OrderEat.Auditable;
 
 @Entity
 @Table(name = "customer")
-public class CustomerEntity {
+public class CustomerEntity extends Auditable<String>{
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -41,20 +48,20 @@ public class CustomerEntity {
 	@Column(name = "username", nullable = false, length = 13, unique = true)
 	private String username;
 	
-	@Column(name = "password", nullable = false, length = 15)
+	@Column(name = "password", nullable = false)
 	private String password;
 	
 	@Column(name = "city", nullable = false, length = 20)
 	private String customerCity;
+	
+	@OneToOne
+    @JoinColumn(name = "roleId")
+	private Role roleId;
 
 	@JsonManagedReference(value = "customer")
 	@OneToMany(fetch = FetchType.LAZY,
 	            cascade =  CascadeType.ALL, orphanRemoval = true, mappedBy = "customer")
 	private List<Order> restaurantOrders = new ArrayList<Order>();
-	
-	@JsonManagedReference(value = "customerRole")
-	@OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, mappedBy = "customer")
-	private Set<Role> roles = new HashSet<Role>();
 	
 	public CustomerEntity() {}
 	
@@ -128,13 +135,12 @@ public class CustomerEntity {
 		this.password = password;
 	}
 
-	public void addRole(Role role) {
-		this.roles.add(role);
-		role.setCustomer(this);
+	public Role getRoleId() {
+		return roleId;
 	}
-	
-	public Set<Role> getRoles() {
-		return this.roles;
+
+	public void setRoleId(Role roleId) {
+		this.roleId = roleId;
 	}
 
 }

@@ -2,6 +2,7 @@ package com.ordereat.OrderEat.Repository;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,6 +11,10 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import com.ordereat.OrderEat.Entity.CustomerEntity;
@@ -23,13 +28,22 @@ import com.ordereat.OrderEat.Entity.Role;
 import com.ordereat.OrderEat.Entity.UserRegistrationEntity;
 import com.ordereat.OrderEat.Exception.AlreadyExistsException;
 import com.ordereat.OrderEat.Exception.NotFoundException;
+import com.ordereat.OrderEat.SpringSecurity.CustomerUserDetails;
 
 @Repository
 @Transactional
 public class CustomerRepositoryImpl implements CustomerRepository {
-
+	@Autowired
+	RestaurantUserRepository restaurantUserRepository;
+	
 	@Autowired
 	EntityManager entityManager;
+	
+	@Autowired
+	BCryptPasswordEncoder bcryptPasswordEncoder;
+	
+	@Autowired
+	RoleRepository roleRepo;
 	
 	@Override
 	public CustomerEntity findCustomerById(Long id) {
@@ -51,38 +65,52 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	}
 	
 	@Override
-	public void registerCustomer(CustomerEntity customerEntity) {
-		Role role = new Role("CUSTOMER");
-		customerEntity.addRole(role);
-		entityManager.persist(role);
+	public void registerCustomer(CustomerEntity cus) {
+		CustomerEntity customerEntity = new CustomerEntity();
+		Role role = roleRepo.getRoleById((long) 4);
+		customerEntity.setRoleId(role);
+		customerEntity.setEmailId(cus.getEmailId());
+		customerEntity.setUsername(cus.getUsername());
+		customerEntity.setPassword(bcryptPasswordEncoder.encode(cus.getPassword()));
+		customerEntity.setCustomerCity(cus.getCustomerCity());
+		customerEntity.setPhone(cus.getPhone());
+		customerEntity.setFirstName(cus.getFirstName());
+		customerEntity.setLastName(cus.getLastName());
 		entityManager.persist(customerEntity);
-			
+		entityManager.flush();
+		audit(customerEntity.getId());
+		
+	}
+	
+	public void audit(Long id) {
+		CustomerEntity customerEntity = entityManager.find(CustomerEntity.class, id);
+		customerEntity.setCreatedBy(customerEntity.getId().toString());
+		customerEntity.setCreatedOn(new Date());
 	}
 	
 	@Override
-	public CustomerEntity getCustomerByUserName(String username) {
+	public Object getCustomerByUserName(String username) {
 		String query = "Select user from CustomerEntity user where user.username = :username";
-		TypedQuery<CustomerEntity> typedQuery = entityManager.createQuery(query, CustomerEntity.class);
+		Query typedQuery = entityManager.createQuery(query);
 		typedQuery.setParameter("username", username);
-		return typedQuery.getSingleResult();
+		List<Object> list = typedQuery.getResultList();
+		if(list.size() == 0) {
+			return restaurantUserRepository.getUserByUserName(username);
+		}
+		return list.get(0);
 	}
 
-	@Override
-	public CustomerEntity isValidCredentials(String loginId, String password) {
-		List<CustomerEntity> list = getCustomerByEmailId(loginId);
-		CustomerEntity user = new CustomerEntity();
-		if (list.isEmpty()) {
-			user = getCustomerByUserName(loginId);
-			if (user.getPassword().equals(password))
-				return user;
-		} else if (list.get(0).getPassword().equals(password)) {
-			user = list.get(0);
-			return user;
-		} else
-			throw new NotFoundException("Customer not registered");
-		return user;
-	}
-
+	/*
+	 * @Override public CustomerEntity isValidCredentials(String loginId, String
+	 * password) { List<CustomerEntity> list = getCustomerByEmailId(loginId);
+	 * CustomerEntity user = new CustomerEntity(); if (list.isEmpty()) { user =
+	 * getCustomerByUserName(loginId); if (bcryptPasswordEncoder.matches(password,
+	 * user.getPassword())) return user; } else if
+	 * (bcryptPasswordEncoder.matches(password, list.get(0).getPassword())) { user =
+	 * list.get(0); return user; } else throw new
+	 * NotFoundException("Customer not registered"); return user; }
+	 */
+	
 	@Override
 	public OrderListForCustomer getOrderFromCustomerId(Long customerId) {
 		OrderListForCustomer customerOrderList = new OrderListForCustomer();
@@ -114,16 +142,21 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 	
 	@Override
 	public OrderListForCustomer loginAction(LoginCredentials loginCredentials) {
-		String password = loginCredentials.getPassword();
-		CustomerEntity validUser = new CustomerEntity();
-		String loginId = loginCredentials.getLoginId();
-		validUser = isValidCredentials(loginId, password);
-
-		if (!validUser.getPassword().isEmpty()) {
-
-			OrderListForCustomer customerDetails = getOrderFromCustomerId(validUser.getId());
-			return customerDetails;
-		}
+		/*
+		 * String password = loginCredentials.getPassword(); CustomerEntity validUser =
+		 * new CustomerEntity(); String loginId = loginCredentials.getLoginId();
+		 * validUser = isValidCredentials(loginId, password);
+		 * 
+		 * if (!validUser.getPassword().isEmpty()) {
+		 * 
+		 * OrderListForCustomer customerDetails =
+		 * getOrderFromCustomerId(validUser.getId()); return customerDetails; } return
+		 * new OrderListForCustomer();
+		 */
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		CustomerEntity customer = ((CustomerUserDetails) auth.getPrincipal()).getLoggedInCustomer();
+		if(customer.getId() != null)
+			return getOrderFromCustomerId(customer.getId());
 		return new OrderListForCustomer();
 	}
 
@@ -175,6 +208,13 @@ public class CustomerRepositoryImpl implements CustomerRepository {
 		if (string == null || string.isEmpty())
 			return true;
 		return false;
+	}
+
+
+	@Override
+	public CustomerEntity isValidCredentials(String loginId, String password) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

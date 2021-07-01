@@ -20,28 +20,24 @@ public class RestaurantBranch {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	/*
-	 * @JsonBackReference("branch")
-	 * 
-	 * @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-	 * 
-	 * @JoinColumn(name="restaurant_id")//Owner of relation, first insertUser then
-	 * restaurant details private RestaurantDetails restaurantDetails;
-	 */
-	
+
+	@JsonBackReference("branch")
+	@ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@JoinColumn(name="restaurant_id")//Owner of relation, first insertUser then
+	private RestaurantDetails restaurantDetails;
+
 	@Column(name = "address_one")
 	private String address_one;
-	
+
 	@Column(name = "address_two")
 	private String address_two;
-	
+
 	@Column(name = "city")
 	private String city;
-	
+
 	@Column(name = "state")
 	private String state;
-	
+
 	@Column(name = "pincode")
 	private Long pincode;
 	/*
@@ -94,5 +90,13 @@ public class RestaurantBranch {
 	public Long getId() {
 		return id;
 	}
-	
+
+	public RestaurantDetails getRestaurantDetails() {
+		return restaurantDetails;
+	}
+
+	public void setRestaurantDetails(RestaurantDetails restaurantDetails) {
+		this.restaurantDetails = restaurantDetails;
+	}
+
 }

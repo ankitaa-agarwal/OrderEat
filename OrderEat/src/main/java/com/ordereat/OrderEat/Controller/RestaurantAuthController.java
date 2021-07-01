@@ -27,11 +27,11 @@ public class RestaurantAuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ResponseEntityClass> login(@RequestBody LoginCredentials loginCredentials) {
-		return restaurantAuthService.loginUser(loginCredentials);
+	public ResponseEntity<ResponseEntityClass> login() {
+		return restaurantAuthService.loginUser();
 	}
 	
-	@PostMapping("/createRestaurantUser")
+	@PostMapping("/registerStaff")
 	public ResponseEntity<ResponseEntityClass> createRestaurantUser(@RequestBody RestaurantStaff restaurantStaff){
 		return restaurantAuthService.createRestaurantUser(restaurantStaff);
 	}
@@ -41,4 +41,8 @@ public class RestaurantAuthController {
 		return restaurantAuthService.verifyRestaurantUser(loginCredentials);
 	}
 
+	@PostMapping("/updateCreds")
+	public ResponseEntity<ResponseEntityClass> updateStaffCreds(@RequestBody RestaurantStaff restaurantStaff){
+		return null;
+	}
 }

@@ -11,4 +11,6 @@ public interface CustomerService {
 	public ResponseEntity<ResponseEntityClass> registerCustomer(CustomerEntity customerEntity);
 	
 	public ResponseEntity<ResponseEntityClass> loginCustomer(LoginCredentials loginCredentials);
+	
+	public Object getCustomerByUserName(String username);
 }

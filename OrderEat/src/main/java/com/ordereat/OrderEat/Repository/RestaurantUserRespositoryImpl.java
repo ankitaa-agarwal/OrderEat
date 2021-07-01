@@ -2,6 +2,7 @@ package com.ordereat.OrderEat.Repository;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +13,14 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import com.ordereat.OrderEat.Entity.CustomerEntity;
 import com.ordereat.OrderEat.Entity.LoginCredentials;
+import com.ordereat.OrderEat.Entity.OrderListForCustomer;
 import com.ordereat.OrderEat.Entity.RestaurantDays;
 import com.ordereat.OrderEat.Entity.RestaurantDetails;
 import com.ordereat.OrderEat.Entity.RestaurantStaff;
@@ -22,11 +28,15 @@ import com.ordereat.OrderEat.Entity.RestaurantUser;
 import com.ordereat.OrderEat.Entity.Role;
 import com.ordereat.OrderEat.Entity.UserRegistrationEntity;
 import com.ordereat.OrderEat.Exception.NotFoundException;
+import com.ordereat.OrderEat.SpringSecurity.CustomerUserDetails;
+import com.ordereat.OrderEat.SpringSecurity.RestaurantUserDetails;
 
 @Repository
 @Transactional
 public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	  enum DAY_OF_THE_WEEK { MONDAY("Monday"), TUESDAY("Tuesday"),
 	  WEDNESDAY("Wednesday"), THURSDAY("Thursday"), FRIDAY("Friday"),
@@ -44,6 +54,9 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 
 	@Autowired
 	RestaurantDetailsRepository restaurantDetailsRepository;
+	
+	@Autowired
+	RoleRepository roleRepository;
 
 	List<RestaurantDays> restaurantDays = new ArrayList<RestaurantDays>();
 	
@@ -82,19 +95,16 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 	 * in the Combined Entity
 	 */
 	@Override
-	public void registerRestaurantUserAndRestaurant(UserRegistrationEntity userRegistrationEntity) {
-		Role role = new Role("OWNER");
+	public void registerAdminAndRestaurant(UserRegistrationEntity userRegistrationEntity) {
+		Role role = roleRepository.getRoleById(1L);
 		
 		RestaurantUser restaurantUser = new RestaurantUser();
 		restaurantUser.setEmail(userRegistrationEntity.getRestaurantUser().getEmail());
 		restaurantUser.setUsername(userRegistrationEntity.getRestaurantUser().getUsername());
 		restaurantUser.setFullName(userRegistrationEntity.getRestaurantUser().getFullName());
-		restaurantUser.setPassword(userRegistrationEntity.getRestaurantUser().getPassword());
+		restaurantUser.setPassword(bCryptPasswordEncoder.encode(userRegistrationEntity.getRestaurantUser().getPassword()));
 		restaurantUser.setPhoneNumber(userRegistrationEntity.getRestaurantUser().getPhoneNumber());
-
-		restaurantUser.addRole(role);
-		role.setRestaurantUser(restaurantUser);
-
+		restaurantUser.setRoleId(role);
 		
 		RestaurantDetails restaurantDetails = new RestaurantDetails();
 		restaurantDetails.setRestaurantName(userRegistrationEntity.getRestaurantDetails().getRestaurantName());
@@ -103,16 +113,25 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 		restaurantUser.setRestaurantDetails(restaurantDetails);
 		populateDaysForRestaurant(restaurantDetails);
 		restaurantDetails.setRestaurantDaysList(restaurantDays);
-		entityManager.persist(role);
 		entityManager.persist(restaurantUser);
+		entityManager.flush();
+		audit(restaurantUser.getId(),restaurantDetails.getId());
 	}
-
+	
+	public void audit(Long userId,Long resId) {
+		RestaurantUser admin = entityManager.find(RestaurantUser.class, userId);
+		admin.setCreatedBy(userId.toString());
+		admin.setCreatedOn(new Date());
+		RestaurantDetails details = entityManager.find(RestaurantDetails.class, resId);
+		details.setCreatedBy(userId.toString());
+		details.setCreatedOn(new Date());
+	}
 	/**
 	 * Create the Restaurant User with Roles Like Staff, Employee
 	 */
 	@Override
-	public void createRestaurantUser(RestaurantStaff restaurantStaff) {
-		Role role = new Role(restaurantStaff.getRole());
+	public void registerRestaurantStaffOrManager(RestaurantStaff restaurantStaff) {
+		Role role = roleRepository.getRoleById(Long.parseLong(restaurantStaff.getRole()));
 
 		RestaurantUser restaurantUser = new RestaurantUser();
 		restaurantUser.setEmail(restaurantStaff.getEmail());
@@ -120,8 +139,7 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 		restaurantUser.setUsername(restaurantStaff.getUsername());
 		restaurantUser.setFullName(restaurantStaff.getFullName());
 		restaurantUser.setPassword("");
-		restaurantUser.addRole(role);
-		role.setRestaurantUser(restaurantUser);
+		restaurantUser.setRoleId(role);
 
 		RestaurantDetails restaurantDetails = entityManager.find(RestaurantDetails.class,
 				Long.parseLong(restaurantStaff.getRestaurantId()));
@@ -129,7 +147,6 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 
 		restaurantUser.setRestaurantDetails(restaurantDetails);
 
-		entityManager.persist(role);
 		entityManager.persist(restaurantUser);
 	}
 	
@@ -203,7 +220,7 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 		currentUser.setEmail(restaurantUser.getEmail());
 		currentUser.setUsername(restaurantUser.getUsername());
 		currentUser.setPhoneNumber(restaurantUser.getPhoneNumber());
-		currentUser.setPassword(restaurantUser.getPassword());
+		currentUser.setPassword(bCryptPasswordEncoder.encode(restaurantUser.getPassword()));
 		/*
 		 * RestaurantDetails restaurantDetails = currentUser.getRestaurantDetails();
 		 * restaurantUser.setRestaurantDetails(restaurantDetails);
@@ -215,7 +232,7 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 	 */
 	@Override
 	public Object[] getRestaurantDetailsFromUser(Long user_id) {
-		String query = "select r.id, r.name  from restaurant_users u left join restaurant_details r on r.id = u.restaurant_id where u.id = :id";
+		String query = "select r.id, r.name, r.created_by, r.created_on  from restaurant_users u left join restaurant_details r on r.id = u.restaurant_id where u.id = :id";
 		Query typedQuery = entityManager.createNativeQuery(query);
 		typedQuery.setParameter("id", user_id);
 		Object[] details = (Object[]) typedQuery.getSingleResult();
@@ -226,11 +243,12 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 	 * Get Restaurant User/User from the Username
 	 */
 	@Override
-	public RestaurantUser getUserByUserName(String username) {
+	public Object getUserByUserName(String username) {
 		String query = "Select user from RestaurantUser user where user.username = :username";
-		TypedQuery<RestaurantUser> typedQuery = entityManager.createQuery(query, RestaurantUser.class);
+		Query typedQuery = entityManager.createQuery(query);
 		typedQuery.setParameter("username", username);
-		return typedQuery.getSingleResult();
+		List<Object> list = typedQuery.getResultList();
+		return list.get(0);
 	}
 
 	@Override
@@ -241,48 +259,61 @@ public class RestaurantUserRespositoryImpl implements RestaurantUserRepository {
 		return typedQuery.getResultList();
 	}
 
+	/*
+	 * public RestaurantUser isValidCredentials(String loginId, String password) {
+	 * List<RestaurantUser> list = getUserByEmailId(loginId); RestaurantUser user =
+	 * new RestaurantUser(); if (list.isEmpty()) { user =
+	 * getUserByUserName(loginId); if (bCryptPasswordEncoder.matches(password,
+	 * user.getPassword())) return user; } else if
+	 * (bCryptPasswordEncoder.matches(password, list.get(0).getPassword())) { user =
+	 * list.get(0); return user; } else throw new
+	 * NotFoundException("User not registered"); return user; }
+	 */
+
 	@Override
-	public RestaurantUser isValidCredentials(String loginId, String password) {
-		List<RestaurantUser> list = getUserByEmailId(loginId);
-		RestaurantUser user = new RestaurantUser();
-		if (list.isEmpty()) {
-			user = getUserByUserName(loginId);
-			if (user.getPassword().equals(password))
-				return user;
-		} else if (list.get(0).getPassword().equals(password)) {
-			user = list.get(0);
-			return user;
-		} else
-			throw new NotFoundException("User not registered");
+	public UserRegistrationEntity checkIfValidUser() {
+		/*
+		 * String password = loginCredentials.getPassword(); RestaurantUser validUser =
+		 * new RestaurantUser(); String loginId = loginCredentials.getLoginId();
+		 * validUser = isValidCredentials(loginId, password);
+		 * 
+		 * if (!validUser.getPassword().isEmpty()) {
+		 * 
+		 * Object[] restaurantDetails = getRestaurantDetailsFromUser(validUser.getId());
+		 * Long longId = ((BigInteger) restaurantDetails[0]).longValue();
+		 * RestaurantDetails resDetails = new RestaurantDetails();
+		 * resDetails.setId(longId);
+		 * resDetails.setRestaurantName(restaurantDetails[1].toString());
+		 * resDetails.addRestaurantUser(validUser); entityManager.merge(validUser);
+		 * return new UserRegistrationEntity(resDetails, validUser,
+		 * validUser.getRoleId().getName()); }
+		 */
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		RestaurantUser customer = ((RestaurantUserDetails) auth.getPrincipal()).getLoggedInUser();
+		UserRegistrationEntity user = new UserRegistrationEntity();
+		user.setRestaurantUser(customer);
+		Object[] restaurantDetails = getRestaurantDetailsFromUser(customer.getId());
+		Long longId = ((BigInteger) restaurantDetails[0]).longValue();
+		RestaurantDetails resDetails = new RestaurantDetails();
+		resDetails.setId(longId);
+		resDetails.setRestaurantName(restaurantDetails[1].toString());
+		resDetails.setCreatedBy(restaurantDetails[2].toString());
+		resDetails.setCreatedOn((Date) restaurantDetails[3]);
+		resDetails.addRestaurantUser(customer);
+		user.setRestaurantDetails(resDetails);
+		user.setRole(customer.getRoleId().getName());
 		return user;
-	}
-
-	@Override
-	public UserRegistrationEntity checkIfValidUser(LoginCredentials loginCredentials) {
-		String password = loginCredentials.getPassword();
-		RestaurantUser validUser = new RestaurantUser();
-		String loginId = loginCredentials.getLoginId();
-		validUser = isValidCredentials(loginId, password);
-
-		if (!validUser.getPassword().isEmpty()) {
-
-			Object[] restaurantDetails = getRestaurantDetailsFromUser(validUser.getId());
-			Long longId = ((BigInteger) restaurantDetails[0]).longValue();
-			RestaurantDetails resDetails = new RestaurantDetails();
-			resDetails.setId(longId);
-			resDetails.setRestaurantName(restaurantDetails[1].toString());
-			resDetails.addRestaurantUser(validUser);
-			entityManager.merge(validUser);
-			return new UserRegistrationEntity(resDetails, validUser, new Role());
-		}
-
-		return new UserRegistrationEntity();
 	}
 
 	public boolean isEmptyOrNull(String string) {
 		if (string == null || string.isEmpty())
 			return true;
 		return false;
+	}
+	@Override
+	public RestaurantUser isValidCredentials(String emailId, String password) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

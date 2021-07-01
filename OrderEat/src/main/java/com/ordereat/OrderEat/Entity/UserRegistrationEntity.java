@@ -17,12 +17,12 @@ public class UserRegistrationEntity {
 	@JsonProperty("restaurantUser")
 	private RestaurantUser restaurantUser;
 	
-	@JsonProperty("role")
-	Role role;
+	@JsonProperty("role")//pass role id//return role name
+	private String role;
 	
 	public UserRegistrationEntity() {}
 	
-	public UserRegistrationEntity(RestaurantDetails restaurantDetails, RestaurantUser restaurantUser, Role role) {
+	public UserRegistrationEntity(RestaurantDetails restaurantDetails, RestaurantUser restaurantUser, String role) {
 		super();
 		this.restaurantDetails = restaurantDetails;
 		this.restaurantUser = restaurantUser;
@@ -45,11 +45,11 @@ public class UserRegistrationEntity {
 		this.restaurantUser = restaurantUser;
 	}
 	
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 }

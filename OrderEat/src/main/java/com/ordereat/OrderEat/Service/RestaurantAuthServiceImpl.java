@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ordereat.OrderEat.Entity.LoginCredentials;
@@ -23,6 +24,9 @@ import com.ordereat.OrderEat.Service.RestaurantUserServiceImpl.STATUS;
 public class RestaurantAuthServiceImpl implements RestaurantAuthService {
 
 	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired
 	RestaurantUserRepository restaurantUserRepository;
 	
 	@Override
@@ -32,7 +36,7 @@ public class RestaurantAuthServiceImpl implements RestaurantAuthService {
 			throw new BadRequestException("Bad Request - Missing fields");
 		} else {
 			if (restaurantUserRepository.getUserByEmailId(combinedRegistrationEntity.getRestaurantUser().getEmail()) != null) {
-				restaurantUserRepository.registerRestaurantUserAndRestaurant(combinedRegistrationEntity);
+				restaurantUserRepository.registerAdminAndRestaurant(combinedRegistrationEntity);
 				ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), null, "");
 				return new ResponseEntity<ResponseEntityClass>(response, HttpStatus.OK);
 			} else
@@ -41,11 +45,9 @@ public class RestaurantAuthServiceImpl implements RestaurantAuthService {
 	}
 	
 	@Override
-	public ResponseEntity<ResponseEntityClass> loginUser(LoginCredentials loginCredentials) {
-		if(loginCredentials.getLoginId().isEmpty() || loginCredentials.getPassword().isEmpty())
-			throw new BadRequestException("Bad Request -- Missing fields");
+	public ResponseEntity<ResponseEntityClass> loginUser() {
 		
-		UserRegistrationEntity combinedUserRegistrationEntity = restaurantUserRepository.checkIfValidUser(loginCredentials);
+		UserRegistrationEntity combinedUserRegistrationEntity = restaurantUserRepository.checkIfValidUser();
 		List<UserRegistrationEntity> list = new ArrayList<UserRegistrationEntity>();
 		
 		if(combinedUserRegistrationEntity.getRestaurantUser() == null)
@@ -63,7 +65,7 @@ public class RestaurantAuthServiceImpl implements RestaurantAuthService {
 				|| restaurantStaff.getPhoneNumber().isEmpty())
 			throw new BadRequestException("Missing Fields -- Bad Request");
 		if (restaurantUserRepository.getUserByEmailId(restaurantStaff.getEmail()).size() == 0) {
-			restaurantUserRepository.createRestaurantUser(restaurantStaff);
+			restaurantUserRepository.registerRestaurantStaffOrManager(restaurantStaff);
 			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), null, "");
 			return new ResponseEntity<ResponseEntityClass>(response, HttpStatus.OK);
 		} else
@@ -76,7 +78,7 @@ public class RestaurantAuthServiceImpl implements RestaurantAuthService {
 		if(loginCredentials.getPassword().isEmpty() || loginCredentials.getLoginId().isEmpty())
 			throw new BadRequestException("Bad Request -- Missing fields");
 		RestaurantUser restaurantUser = restaurantUserRepository.getUserByEmailId(loginCredentials.getLoginId()).get(0);
-		restaurantUser.setPassword(loginCredentials.getPassword());
+		restaurantUser.setPassword(bCryptPasswordEncoder.encode(loginCredentials.getPassword()));
 		if( restaurantUser != null) {
 			restaurantUserRepository.updateRestaurantUser(restaurantUser.getId(), restaurantUser);
 			ResponseEntityClass response = new ResponseEntityClass(STATUS.SUCCESS.toString(), null, "");

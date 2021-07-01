@@ -51,4 +51,10 @@ public class CustomerServiceImpl implements CustomerService {
 		return new ResponseEntity<ResponseEntityClass>(response, HttpStatus.OK);
 	}
 
+	@Override
+	public Object getCustomerByUserName(String username) {
+		// TODO Auto-generated method stub
+		return customerRepository.getCustomerByUserName(username);
+	}
+
 }

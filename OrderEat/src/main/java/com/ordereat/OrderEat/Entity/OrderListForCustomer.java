@@ -34,6 +34,9 @@ public class OrderListForCustomer {
 	@JsonProperty("order_details")
 	private List<IndividualOrderResponse> orderDetailsList;
 
+	public OrderListForCustomer() {
+	}
+	
 	public Long getCustomerId() {
 		return customerId;
 	}

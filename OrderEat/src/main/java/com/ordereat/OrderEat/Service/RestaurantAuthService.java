@@ -11,7 +11,7 @@ public interface RestaurantAuthService {
 
 	public ResponseEntity<ResponseEntityClass> registerRestaurantUser(UserRegistrationEntity combinedEntity);
 
-	public ResponseEntity<ResponseEntityClass> loginUser(LoginCredentials loginCredentials);
+	public ResponseEntity<ResponseEntityClass> loginUser();
 
 	public ResponseEntity<ResponseEntityClass> createRestaurantUser(RestaurantStaff restaurantStaff);
 

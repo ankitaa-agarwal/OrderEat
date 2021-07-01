@@ -165,4 +165,10 @@ public class RestaurantUserServiceImpl implements RestaurantUserService {
 		return findAllRestaurantDetails();
 	}
 
+	@Override
+	public RestaurantUser getUserByUserName(String username) {
+		// TODO Auto-generated method stub
+		return (RestaurantUser) restaurantUserRepository.getUserByUserName(username);
+	}
+
 }

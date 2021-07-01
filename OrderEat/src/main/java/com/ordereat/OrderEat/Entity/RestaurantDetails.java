@@ -16,10 +16,11 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.ordereat.OrderEat.Auditable;
 
 @Entity
 @Table(name = "restaurant_details")
-public class RestaurantDetails {
+public class RestaurantDetails extends Auditable<String> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,15 +48,12 @@ public class RestaurantDetails {
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "restaurant")
 	private List<Order> restaurantOrders = new ArrayList<Order>();
 
-	/*
-	 * @JsonManagedReference("branch")
-	 * 
-	 * @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval =
-	 * true, mappedBy = "restaurantDetails") private List<RestaurantBranch>
-	 * restaurantBranch = new ArrayList<RestaurantBranch>();
-	 */
-	public RestaurantDetails() {
-	};
+	@JsonManagedReference("branch")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval =
+	true, mappedBy = "restaurantDetails") 
+	private List<RestaurantBranch> restaurantBranchList = new ArrayList<RestaurantBranch>();
+	 
+	public RestaurantDetails() {};
 
 	public RestaurantDetails(String restaurantName, String city) {
 		super();
@@ -122,7 +120,17 @@ public class RestaurantDetails {
 	public void setRestaurantDaysList(List<RestaurantDays> list) {
 		this.restaurantDays = list;
 	}
+	
+	public void addRestaurantBranch(RestaurantBranch restaurantBranch) {
+		this.restaurantBranchList.add(restaurantBranch);
+		restaurantBranch.setRestaurantDetails(this);
+	}
 
+	@JsonProperty(access = Access.WRITE_ONLY)
+	public List<RestaurantBranch> getRestauarntBranchList() {
+		return restaurantBranchList;
+	}
+	
 	public String getCity() {
 		return city;
 	}
